@@ -11,6 +11,7 @@ import LoadingSpinner from "./shared/components/UIElements/LoadingSpinner";
 import { AuthContext } from "./shared/context/auth-context";
 import { useAuth } from "./shared/hooks/auth-hook";
 
+const Users = React.lazy(() => import("./user/pages/Users"));
 const Auth = React.lazy(() => import("./user/pages/Auth"));
 
 const App = () => {
@@ -21,7 +22,7 @@ const App = () => {
     routes = (
       <Switch>
         <Route path="/" exact>
-          <div>All users</div>
+          <Users />
         </Route>
         <Route path="/:userId/messages" exact>
           <div>My messages</div>
@@ -33,7 +34,7 @@ const App = () => {
     routes = (
       <Switch>
         <Route path="/" exact>
-          <div>All users</div>
+          <Users />
         </Route>
         <Route path="/:userId/messages" exact>
           <div>User messages</div>
