@@ -12,6 +12,7 @@ import { AuthContext } from "./shared/context/auth-context";
 import { useAuth } from "./shared/hooks/auth-hook";
 
 const Users = React.lazy(() => import("./user/pages/Users"));
+const UserMessages = React.lazy(() => import("./message/pages/UserMessages"));
 const Auth = React.lazy(() => import("./user/pages/Auth"));
 
 const App = () => {
@@ -25,7 +26,7 @@ const App = () => {
           <Users />
         </Route>
         <Route path="/:userId/messages" exact>
-          <div>My messages</div>
+        <UserMessages />
         </Route>
         <Redirect to="/" />
       </Switch>
@@ -37,7 +38,7 @@ const App = () => {
           <Users />
         </Route>
         <Route path="/:userId/messages" exact>
-          <div>User messages</div>
+        <UserMessages />
         </Route>
         <Route path="/auth" exact>
           <Auth />
