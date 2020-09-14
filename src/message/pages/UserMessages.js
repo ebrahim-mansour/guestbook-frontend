@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import MessageList from "../components/MessageList";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";

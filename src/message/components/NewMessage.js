@@ -33,7 +33,7 @@ const NewMessage = (props) => {
   const messageSubmitHandler = async (event) => {
     event.preventDefault();
     try {
-      const response = await sendRequest(
+      await sendRequest(
         `${process.env.REACT_APP_BACKEND_URL}/messages/create`,
         "POST",
         JSON.stringify({

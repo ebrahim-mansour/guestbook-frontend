@@ -26,7 +26,7 @@ const App = () => {
           <Users />
         </Route>
         <Route path="/:userId/messages" exact>
-        <UserMessages />
+          <UserMessages />
         </Route>
         <Redirect to="/" />
       </Switch>
@@ -38,7 +38,7 @@ const App = () => {
           <Users />
         </Route>
         <Route path="/:userId/messages" exact>
-        <UserMessages />
+          <UserMessages />
         </Route>
         <Route path="/auth" exact>
           <Auth />
