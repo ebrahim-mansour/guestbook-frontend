@@ -29,6 +29,7 @@ const MessageList = (props) => {
             creatorId={message.creator}
             ownerId={message.owner}
             msgBody={message.msgBody}
+            reply={message.reply}
             onDelete={props.onDeleteMessage}
           />
         ))}
@@ -59,6 +60,7 @@ const MessageList = (props) => {
             creatorId={message.creator}
             ownerId={message.owner}
             msgBody={message.msgBody}
+            reply={message.reply}
             onDelete={props.onDeleteMessage}
           />
         ))}

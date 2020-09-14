@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 
 import Card from "../../shared/components/UIElements/Card";
 import Input from "../../shared/components/FormElements/Input";
@@ -20,6 +20,15 @@ const MessageItem = (props) => {
   const [formState, inputHandler] = useForm(
     {
       msgBody: {
+        value: "",
+        isValid: false,
+      },
+    },
+    false
+  );
+  const [replyFormState, replyFormInputHandler] = useForm(
+    {
+      reply: {
         value: "",
         isValid: false,
       },
@@ -71,7 +80,7 @@ const MessageItem = (props) => {
         JSON.stringify({ messageId: props.id }),
         {
           Authorization: `Bearer ${auth.token}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         }
       );
       props.onDelete(props.id);
@@ -86,6 +95,21 @@ const MessageItem = (props) => {
   };
   const confirmReplyHandler = async () => {
     setShowReplyFormModal(false);
+    try {
+      await sendRequest(
+        `${process.env.REACT_APP_BACKEND_URL}/messages/reply`,
+        "POST",
+        JSON.stringify({
+          replyBody: replyFormState.inputs.reply.value,
+          messageId: props.id,
+        }),
+        {
+          Authorization: `Bearer ${auth.token}`,
+          "Content-Type": "application/json",
+        }
+      );
+      history.push("/");
+    } catch (err) {}
   };
 
   return (
@@ -101,7 +125,9 @@ const MessageItem = (props) => {
             <Button inverse onClick={cancelEditHandler}>
               CANCEL
             </Button>
-            <Button onClick={confirmEditHandler}>EDIT</Button>
+            <Button onClick={confirmEditHandler} disabled={!formState.isValid}>
+              EDIT
+            </Button>
           </React.Fragment>
         }
       >
@@ -139,27 +165,39 @@ const MessageItem = (props) => {
       <Modal
         show={showReplyFormModal}
         onCancel={cancelReplyHandler}
-        header={`Replying.....`}
+        header={props.msgBody}
         footerClass="message-item__modal-actions"
         footer={
           <React.Fragment>
             <Button inverse onClick={cancelReplyHandler}>
               CANCEL
             </Button>
-            <Button danger onClick={confirmReplyHandler}>
+            <Button
+              onClick={confirmReplyHandler}
+              disabled={!replyFormState.isValid}
+            >
               REPLY
             </Button>
           </React.Fragment>
         }
       >
-        <p>Do you want to proceed and reply to this message?</p>
+        <Input
+          id="reply"
+          element="input"
+          type="text"
+          label="Reply"
+          validators={[VALIDATOR_REQUIRE()]}
+          errorText="Please enter a valid text!"
+          onInput={replyFormInputHandler}
+        />
       </Modal>
       <li className="message-item">
         <Card className="message-item__content">
           {isLoading && <LoadingSpinner asOverlay />}
           <div className="message-item__info">
             <p>{props.msgBody}</p>
-            {auth.userId === props.ownerId && (
+            {props.reply && <p>REPLY: {props.reply}</p>}
+            {auth.userId === props.ownerId && !props.reply && (
               <Button onClick={showReplyingFormHandler}>REPLY</Button>
             )}
           </div>
