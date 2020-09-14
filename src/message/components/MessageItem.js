@@ -1,17 +1,31 @@
 import React, { useState, useContext } from "react";
 
 import Card from "../../shared/components/UIElements/Card";
+import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
 import Modal from "../../shared/components/UIElements/Modal";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { AuthContext } from "../../shared/context/auth-context";
 import { useHttpClient } from "../../shared/hooks/http-hook";
+import { useForm } from "../../shared/hooks/form-hook";
+import { VALIDATOR_REQUIRE } from "../../shared/util/validators";
 import "./MessageItem.css";
+import { useHistory } from "react-router-dom";
 
 const MessageItem = (props) => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const auth = useContext(AuthContext);
+  const history = useHistory();
+  const [formState, inputHandler] = useForm(
+    {
+      msgBody: {
+        value: "",
+        isValid: false,
+      },
+    },
+    false
+  );
 
   const [showEditFormModal, setShowEditFormModal] = useState(false);
   const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
@@ -25,6 +39,21 @@ const MessageItem = (props) => {
   };
   const confirmEditHandler = async () => {
     setShowEditFormModal(false);
+    try {
+      await sendRequest(
+        `${process.env.REACT_APP_BACKEND_URL}/messages/message`,
+        "PATCH",
+        JSON.stringify({
+          msgBody: formState.inputs.msgBody.value,
+          messageId: props.id,
+        }),
+        {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${auth.token}`,
+        }
+      );
+      history.push(`/`);
+    } catch (err) {}
   };
 
   const showDeleteWarningHandler = () => {
@@ -53,7 +82,7 @@ const MessageItem = (props) => {
       <Modal
         show={showEditFormModal}
         onCancel={cancelEditHandler}
-        header={`Editing....`}
+        header={props.msgBody}
         footerClass="message-item__modal-actions"
         footer={
           <React.Fragment>
@@ -64,7 +93,15 @@ const MessageItem = (props) => {
           </React.Fragment>
         }
       >
-        <p>Do you want to proceed and edit this message?</p>
+        <Input
+          id="msgBody"
+          element="input"
+          type="text"
+          label="Message"
+          validators={[VALIDATOR_REQUIRE()]}
+          errorText="Please enter a valid text!"
+          onInput={inputHandler}
+        />
       </Modal>
       <Modal
         show={showConfirmDeleteModal}
