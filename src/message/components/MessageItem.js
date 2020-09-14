@@ -64,6 +64,18 @@ const MessageItem = (props) => {
   };
   const confirmDeleteHandler = async () => {
     setShowConfirmDeleteModal(false);
+    try {
+      await sendRequest(
+        `${process.env.REACT_APP_BACKEND_URL}/messages/message`,
+        "DELETE",
+        JSON.stringify({ messageId: props.id }),
+        {
+          Authorization: `Bearer ${auth.token}`,
+          "Content-Type": "application/json"
+        }
+      );
+      props.onDelete(props.id);
+    } catch (err) {}
   };
 
   const showReplyingFormHandler = () => {
