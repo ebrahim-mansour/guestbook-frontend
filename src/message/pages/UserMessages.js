@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 
 import MessageList from "../components/MessageList";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
@@ -23,11 +23,13 @@ const UserMessages = () => {
     };
     fetchMessages();
   }, [sendRequest, userId]);
+
   const deleteMessageHandler = (deletedMessageId) => {
     setLoadedMessages((prevMessages) =>
       prevMessages.filter((message) => message.id !== deletedMessageId)
     );
   };
+
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
@@ -37,7 +39,11 @@ const UserMessages = () => {
         </div>
       )}
       {!isLoading && loadedMessages && (
-        <MessageList items={loadedMessages} ownerId={userId} onDeleteMessage={deleteMessageHandler} />
+        <MessageList
+          items={loadedMessages}
+          ownerId={userId}
+          onDeleteMessage={deleteMessageHandler}
+        />
       )}
       ;
     </React.Fragment>
